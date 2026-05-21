@@ -1,0 +1,85 @@
+# =========================
+# dependencies
+# =========================
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# =========================
+# build output
+# =========================
+dist/
+build/
+backend/dist/
+frontend/dist/
+
+# =========================
+# environment
+# =========================
+.env
+.env.*
+!.env.example
+
+backend/.env
+frontend/.env
+frontend/.env.ngrok
+
+# =========================
+# runtime uploads only
+# =========================
+/uploads/
+/backend/uploads/
+storage/
+tmp/
+temp/
+
+# =========================
+# generated media / cache
+# =========================
+thumbnails/
+cache/
+
+# =========================
+# logs
+# =========================
+*.log
+logs/
+
+# =========================
+# local database / dumps
+# =========================
+*.sql
+*.sqlite
+*.db
+
+# =========================
+# temp browser testing
+# =========================
+.tmp-chrome-*
+
+# =========================
+# private docs / AI workspace
+# =========================
+docAI/
+DocAI/
+behavior_AI.MD
+private-docs/
+audit/
+notes/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
