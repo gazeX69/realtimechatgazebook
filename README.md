@@ -1,137 +1,488 @@
-# Realtime Chat/Social App Starter
+````md
+# GAZEBook
 
-Monorepo awal untuk aplikasi chat realtime dengan NestJS, Prisma, PostgreSQL, Redis, Socket.IO, BullMQ, React, Vite, Zustand, dan TailwindCSS.
+GAZEBook adalah monorepo aplikasi sosial media realtime multi-platform berbasis chat yang menggabungkan konsep:
 
-Fokus implementasi saat ini:
+- WhatsApp → direct/group realtime chat
+- MiChat → discovery dan social connection
+- Instagram → media sharing dan visual profile
+- Twitter/X → feed dan short post
+- Forum/community klasik → room dan komunitas
 
-- Phase stabilisasi: auth/profile/relationship/chat/feed/media dasar sudah ada dan fokus saat ini adalah realtime correctness.
-- Chat direct dan group basic tersedia, termasuk protected REST endpoint, Socket.IO room auth, typing, read receipt, reconnect repair, dan presence dasar.
-- Feed dasar tersedia, termasuk post media, reactions, comments, dan realtime feed events.
-- Media saat ini memakai dua jalur: legacy `/uploads` untuk avatar/kompatibilitas feed lama, dan structured `/media` untuk upload baru/chat attachments.
+Project ini dibangun bertahap dengan prioritas utama:
+- realtime correctness,
+- modular architecture,
+- backend authorization,
+- dan stabilization lifecycle.
 
-Runtime documentation:
-- `docAI/runtime/CURRENT_SYSTEM_STATE.md`
-- `docAI/runtime/ARCHITECTURE_MAP.md`
-- `docAI/runtime/EVENT_CONTRACTS.md`
-- `docAI/runtime/ACTIVE_BUG_WATCHLIST.md`
+---
 
-README ini hanya onboarding. Untuk source-of-truth runtime, gunakan dokumen `docAI/runtime`.
+# Current Project Status
 
-## Menjalankan Dari Nol
+Project saat ini berada pada fase:
 
-1. Jalankan PostgreSQL dan Redis.
+```txt
+STABILIZATION ONLY
+````
+
+Fokus utama development saat ini:
+
+* direct/group realtime consistency
+* reconnect lifecycle
+* read receipt synchronization
+* presence synchronization
+* optimistic state reconciliation
+* notification correctness
+* media lifecycle correctness
+
+Penambahan fitur baru bukan prioritas utama sampai lifecycle realtime stabil.
+
+---
+
+# Current Implemented Foundation
+
+## Backend
+
+* NestJS
+* Prisma ORM
+* PostgreSQL
+* Redis
+* Socket.IO
+* BullMQ foundation
+
+## Frontend
+
+* React
+* Vite
+* Zustand
+* TailwindCSS
+* Socket.IO Client
+
+---
+
+# Current Features
+
+## Authentication & User
+
+* Register
+* Login
+* Refresh token
+* Logout
+* Protected routes
+* User profile
+* Avatar upload
+* User search
+
+## Relationship
+
+* Follow / unfollow
+* Friend request
+* Accept / reject request
+* Block user
+* Suggested users
+
+## Realtime Chat
+
+* Direct conversation
+* Group conversation basic
+* Realtime messaging
+* Typing indicator
+* Presence snapshot
+* Online/offline status
+* Read receipt basic
+* Reconnect repair foundation
+* Soft delete message foundation
+
+## Feed & Media Foundation
+
+Current status:
+
+* implemented but still stabilization phase
+
+Features:
+
+* post text/media
+* reactions
+* comments
+* media upload abstraction
+* attachment rendering
+* media viewer
+
+## Notifications
+
+* unread count
+* realtime notification events
+* notification list
+* mark as read
+
+## Stories Foundation
+
+Current status:
+
+* implemented foundation
+* not yet considered stable
+
+---
+
+# Architecture Principles
+
+## Core Rule
+
+Realtime chat adalah core system.
+
+Semua fitur sosial lain:
+
+* feed
+* stories
+* media
+* forum
+* nearby
+* anonymous
+
+tidak boleh merusak stabilitas realtime lifecycle.
+
+---
+
+# Development Principles
+
+## Current Mode
+
+```txt
+MODE: STABILIZATION ONLY
+```
+
+Rules:
+
+* no large refactor
+* no unnecessary architecture rewrite
+* no feature expansion before stabilization
+* focus on reproducible bug fixing
+* focus on source-of-truth consistency
+
+---
+
+# Realtime Lifecycle Priorities
+
+Current high-risk areas:
+
+* optimistic reconciliation
+* reconnect recovery
+* read receipt sync
+* notification synchronization
+* presence multi-tab consistency
+* attachment lifecycle
+* realtime ordering
+* duplicate prevention
+
+---
+
+# Monorepo Structure
+
+```txt
+backend/
+frontend/
+scripts/
+```
+
+## Backend
+
+```txt
+backend/
+  prisma/
+  src/
+    common/
+    config/
+    modules/
+```
+
+Main modules:
+
+* auth
+* users
+* follows
+* friends
+* conversations
+* messages
+* realtime
+* posts
+* notifications
+* reports
+* safety
+* media
+* uploads
+* stories
+
+## Frontend
+
+```txt
+frontend/
+  src/
+    app/
+    components/
+    features/
+    stores/
+    lib/
+```
+
+---
+
+# Runtime Stack
+
+## Backend
+
+* NestJS
+* Prisma
+* PostgreSQL
+* Redis
+* BullMQ
+* Socket.IO
+
+## Frontend
+
+* React
+* Zustand
+* TailwindCSS
+* Socket.IO Client
+
+---
+
+# Setup From Zero
+
+## 1. Start PostgreSQL & Redis
 
 ```bash
 docker compose up -d
 ```
 
-2. Siapkan backend.
+---
+
+## 2. Backend Setup
 
 ```bash
 cd backend
+
 cp .env.example .env
+
 npm install
+
 npm run prisma:generate
+
 npm run prisma:migrate -- --name init
+
 npm run start:dev
 ```
 
-Backend berjalan di `http://localhost:3000/api`.
+Backend:
 
-3. Siapkan frontend.
+```txt
+http://localhost:3000
+```
+
+Global API prefix:
+
+```txt
+/api
+```
+
+---
+
+## 3. Frontend Setup
 
 ```bash
 cd frontend
+
 cp .env.example .env
+
 npm install
+
 npm run dev
 ```
 
-Frontend berjalan di `http://localhost:5173`.
+Frontend:
 
-## Endpoint Tersedia
+```txt
+http://localhost:5173
+```
 
-Health:
+---
 
-- `GET /api/health`
+# API Overview
 
-Auth:
+## Health
 
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/refresh`
-- `POST /api/auth/logout` protected
+* GET `/api/health`
 
-User:
+---
 
-- `GET /api/me` protected
-- `PUT /api/me/profile` protected
-- `GET /api/users` protected
+## Auth
 
-Chat:
+* POST `/api/auth/register`
+* POST `/api/auth/login`
+* POST `/api/auth/refresh`
+* POST `/api/auth/logout`
 
-- `POST /api/conversations/direct` protected
-- `POST /api/conversations/group` protected
-- `PATCH /api/conversations/group/:id` protected
-- `POST /api/conversations/group/:id/members` protected
-- `DELETE /api/conversations/group/:id/members/:userId` protected
-- `POST /api/conversations/group/:id/owner` protected
-- `POST /api/conversations/group/:id/leave` protected
-- `GET /api/conversations` protected
-- `GET /api/conversations/:conversationId/messages` protected
-- `POST /api/conversations/:conversationId/messages` protected
-- `DELETE /api/conversations/:conversationId/messages/:messageId` protected
-- `POST /api/conversations/:id/read-all` protected
+---
 
-Social:
+## User
 
-- `GET /api/users/search` protected
-- `GET /api/users/suggested` protected
-- `GET /api/users/:id/profile` protected
-- `POST /api/users/:id/follow` protected
-- `DELETE /api/users/:id/follow` protected
-- `GET /api/users/:id/followers` protected
-- `GET /api/users/:id/following` protected
-- `POST /api/friends/:id/request` protected
-- `GET /api/friends` protected
-- `GET /api/friend-requests` protected
-- `POST /api/friend-requests/:id/accept` protected
-- `POST /api/friend-requests/:id/reject` protected
-- `POST /api/friend-requests/:id/cancel` protected
-- `DELETE /api/friends/:id` protected
-- `POST /api/users/:id/block` protected
-- `DELETE /api/users/:id/block` protected
-- `GET /api/blocks` protected
+* GET `/api/me`
+* PUT `/api/me/profile`
+* GET `/api/users`
+* GET `/api/users/search`
+* GET `/api/users/:id/profile`
 
-Feed, media, notifications:
+---
 
-- `GET /api/feed` protected
-- `GET /api/explore` protected
-- `POST /api/posts` protected
-- `POST /api/posts/:id/react` protected
-- `DELETE /api/posts/:id/react` protected
-- `GET /api/posts/:id/comments` protected
-- `POST /api/posts/:id/comments` protected
-- `POST /api/uploads/post-media` protected
-- `POST /api/uploads/avatar` protected
-- `POST /api/media/upload` protected
-- `GET /api/media/:id` protected
-- `GET /api/notifications` protected
-- `GET /api/notifications/unread-count` protected
-- `POST /api/notifications/:id/read` protected
-- `PATCH /api/notifications/read-all` protected
-- `POST /api/reports` protected
+## Relationship
 
-Socket.IO:
+### Follow
 
-- Connect ke `http://localhost:3000` dengan `auth.token = accessToken`
-- Emit `conversation.join` dengan `{ "conversationId": "..." }`
-- Listen `message.sent`, `message.new`, `message.read`, `notification.new`, `presence.snapshot`, `user.online`, `user.offline`, `user.typing`, `user.stopTyping`, `post.created`, `post.reacted`, `comment.created`
-- Runtime event contract lengkap ada di `docAI/runtime/EVENT_CONTRACTS.md`
+* POST `/api/users/:id/follow`
+* DELETE `/api/users/:id/follow`
 
-## Response API
+### Friend
 
-Sukses:
+* POST `/api/friends/:id/request`
+* GET `/api/friends`
+* GET `/api/friend-requests`
+* POST `/api/friend-requests/:id/accept`
+* POST `/api/friend-requests/:id/reject`
+* POST `/api/friend-requests/:id/cancel`
+
+### Safety
+
+* POST `/api/users/:id/block`
+* DELETE `/api/users/:id/block`
+* GET `/api/blocks`
+
+---
+
+# Chat API
+
+## Conversation
+
+* POST `/api/conversations/direct`
+* POST `/api/conversations/group`
+* GET `/api/conversations`
+
+## Messages
+
+* GET `/api/conversations/:conversationId/messages`
+* POST `/api/conversations/:conversationId/messages`
+* DELETE `/api/conversations/:conversationId/messages/:messageId`
+
+## Group Management
+
+* PATCH `/api/conversations/group/:id`
+* POST `/api/conversations/group/:id/members`
+* DELETE `/api/conversations/group/:id/members/:userId`
+* POST `/api/conversations/group/:id/owner`
+* POST `/api/conversations/group/:id/leave`
+
+---
+
+# Feed & Social API
+
+## Feed
+
+* GET `/api/feed`
+* GET `/api/explore`
+
+## Posts
+
+* POST `/api/posts`
+* POST `/api/posts/:id/react`
+* DELETE `/api/posts/:id/react`
+
+## Comments
+
+* GET `/api/posts/:id/comments`
+* POST `/api/posts/:id/comments`
+
+---
+
+# Media API
+
+## Upload
+
+* POST `/api/uploads/avatar`
+* POST `/api/uploads/post-media`
+* POST `/api/media/upload`
+
+## Media Access
+
+* GET `/api/media/:id`
+
+---
+
+# Notification API
+
+* GET `/api/notifications`
+* GET `/api/notifications/unread-count`
+* POST `/api/notifications/:id/read`
+* PATCH `/api/notifications/read-all`
+
+---
+
+# Report API
+
+* POST `/api/reports`
+
+---
+
+# Socket.IO Events
+
+Connection:
+
+```js
+auth: {
+  token: accessToken
+}
+```
+
+## Client Emit
+
+```txt
+conversation.join
+```
+
+Payload:
+
+```json
+{
+  "conversationId": "..."
+}
+```
+
+---
+
+## Client Listen
+
+```txt
+message.sent
+message.new
+message.read
+message.deleted
+
+notification.new
+
+presence.snapshot
+user.online
+user.offline
+
+user.typing
+user.stopTyping
+
+post.created
+post.reacted
+comment.created
+```
+
+---
+
+# API Response Format
+
+## Success
 
 ```json
 {
@@ -142,7 +493,7 @@ Sukses:
 }
 ```
 
-Error:
+## Error
 
 ```json
 {
@@ -156,45 +507,92 @@ Error:
 }
 ```
 
-## Test Manual Auth
+---
 
-1. Buka `http://localhost:5173/register`.
-2. Buat akun pertama.
-3. Logout.
-4. Login lagi dengan email dan password yang sama.
-5. Cek halaman `/chat` terbuka.
-6. Cek `GET /api/me` dengan Bearer token dari localStorage jika ingin test via Postman/curl.
+# Database Notes
 
-Contoh curl:
+* UUID primary key
+* snake_case database naming
+* camelCase API response
+* soft delete foundation
+* direct conversation uniqueness protection
+* Prisma as single ORM layer
 
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"alice@example.com\",\"username\":\"alice\",\"displayName\":\"Alice\",\"password\":\"password123\"}"
+---
+
+# Manual Realtime Test
+
+## Chat Realtime
+
+1. Login 2 akun berbeda.
+2. Buka `/chat` di 2 browser/tab.
+3. Join conversation.
+4. Kirim pesan.
+5. Validasi:
+
+   * realtime receive
+   * no duplicate
+   * read receipt sync
+   * reconnect consistency
+
+---
+
+# Current Known Risks
+
+## High Risk
+
+* optimistic lifecycle
+* reconnect synchronization
+* notification ordering
+* attachment reconciliation
+* presence multi-tab consistency
+* race condition prevention
+
+## Infrastructure Risk
+
+* local filesystem upload belum cocok untuk horizontal scaling
+* Redis Pub/Sub multi-instance belum production tested
+* BullMQ worker belum production-ready
+
+---
+
+# Security Rules
+
+* Semua endpoint protected memakai JWT kecuali auth public dan health.
+* Backend wajib validasi participant aktif sebelum access conversation.
+* Frontend tidak boleh menjadi source-of-truth authorization.
+* User block wajib membatasi interaction.
+* Realtime room wajib divalidasi membership.
+
+---
+
+# Important Notes
+
+Project ini dibangun bertahap.
+
+Prioritas utama bukan banyak fitur,
+tetapi:
+
+* realtime correctness
+* stabilization
+* lifecycle consistency
+* architecture safety
+
+Karena dalam aplikasi realtime sosial media:
+bug kecil pada lifecycle dapat merusak seluruh experience user.
+
+```
 ```
 
-## Test Manual Chat Realtime
+# Support Development
 
-1. Register akun Alice di browser pertama.
-2. Register akun Bob di browser kedua atau incognito.
-3. Di akun Alice, buka `/chat`, pilih Bob dari panel Users.
-4. Di akun Bob, refresh `/chat`, buka conversation dengan Alice.
-5. Kirim pesan dari salah satu browser.
-6. Browser lain menerima event `message.sent` lewat Socket.IO.
+Jika project ini membantu atau kamu ingin mendukung pengembangan Realtime Social Hub, kamu bisa traktir kopi di:
 
-## Catatan Database
+☕ https://trakteer.id/gazeX69
 
-- Primary key memakai UUID.
-- Table dan column memakai snake_case lewat `@@map` dan `@map`.
-- Response API tetap camelCase.
-- `users`, `conversations`, dan `messages` punya `deleted_at` untuk soft delete.
-- `conversations.direct_key` unik untuk mencegah direct conversation dobel antara dua user.
-
-## Risiko dan Limitasi
-
-- Belum ada email verification, forgot password, deteksi reuse refresh token, push notification, dan audit log admin lengkap.
-- BullMQ sudah dikonfigurasi sebagai fondasi queue, tetapi belum ada worker produksi.
-- Redis Pub/Sub Socket.IO sudah dipasang untuk multi-instance, tetapi belum ada deployment profile production.
-- Realtime lifecycle masih fase stabilisasi: reconnect, read receipt, notification sync, presence, dan optimistic reconciliation masih high risk.
-- Backend emit `message.deleted` sudah ada, tetapi client listener belum terkonfirmasi pada audit 2026-05-20.
-- Local filesystem upload belum cocok untuk horizontal deployment tanpa shared/object storage.
+Dukungan membantu pengembangan:
+- realtime infrastructure
+- testing device
+- deployment
+- storage
+- dan pengembangan fitur jangka panjang
